@@ -1,23 +1,60 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect,useState } from "react";
 import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { BarChart } from "@mui/x-charts/BarChart";
-// import badge1 from "../assets/badge1.png";
 import badge1 from "../../assets/badge1.png";
-
 import fire from "../../assets/fire.png";
-// import { Progress } from "@chakra-ui/react";
-import FormGroup from "@mui/material/FormGroup";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
-// import { Progress } from 'flowbite-react';
-import Progressbar from "./ProgressBar";
-
-
+import axios from "axios";
+import { useUserContext } from "../../context/UserContext";
+import Calendar from 'react-calendar';
+import 'react-calendar/dist/Calendar.css';
 import "./Home.scss";
 
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import FormGroup from '@mui/material/FormGroup';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
+import img1 from '../../assets/heartbeat.gif';
+import img2 from '../../assets/medicine.gif';
+import img3 from '../../assets/hand.gif';
+
+
+const ValuePiece = Date | null;
+const Value = ValuePiece | [ValuePiece, ValuePiece];
+
 function Home() {
+  const { loggedDetails, taskScore } = useUserContext();
+  const [userDetailsDb,setUserDetailsDb]=useState({});
+
+  useEffect(() => {
+    getUserDetailsByemail();
+  }, []);
+
+  // function or in login page we can keep the userdetails in context
+  // in loggedDetails will get all the name, user diseases names
+  async function getUserDetailsByemail() {
+    try {
+      let email = localStorage.getItem("userEmail");
+      const response = await axios.get(`/user/${email}`);
+
+      if (response.status === 200) {
+        console.log("User exists:", response.data.user);
+        setUserDetailsDb(response.data.user);
+      } else if (response.status === 404) {
+        console.log("User not found");
+        alert("User not found");
+      }
+    } catch (error) {
+      console.error("Error checking user:", error);
+    }
+  }
+  const [value, onChange] = useState(new Date());
+
   const data = [
     {
       name: "Page A",
@@ -65,8 +102,9 @@ function Home() {
 
   return (
     <main className="main-container">
+      <div className="blue">
       <div className="main-title">
-        <h3>Hi Profile Name</h3>
+        <h3>Hi {userDetailsDb.name}</h3>
       </div>
 
       <div className="upper-section">
@@ -91,8 +129,8 @@ function Home() {
         <div className="Graph Goal">
           <h3>Goals</h3>
           <CircularProgressbar
-            value={75}
-            text={`75%`}
+            value={50 + taskScore}
+            text={`${50 + taskScore}%`}
             className="progress-bar"
             styles={buildStyles({
               // Rotation of path and trail, in number of turns (0-1)
@@ -158,7 +196,7 @@ function Home() {
           </div>
         </div>
       </div>
-
+    </div>
       <div className="mid-section">
         <div className="notes">
           <textarea
@@ -170,34 +208,78 @@ function Home() {
           ></textarea>
         </div>
 
-        <div className="tasks">
-          <h2>Completed Task</h2>
-          <div className="task">
-            <div className="task-name">
-              <h3>Task 1</h3>
-              <Progressbar />
-                
-            </div>
+        <div className="calendar">
+            <Calendar className='content' onChange={onChange}   value={value} />
+        </div>
 
-          </div>
-          <div className="task">
-            <div className="task-name">
-              <h3>Task 1</h3>
-              <Progressbar />
-
-            </div>
-
-          </div>
-          <div className="task">
-            <div className="task-name">
-              <h3>Task 1</h3>
-              <Progressbar />
-
-            </div>
-
-          </div>     
-          </div>   
+        
       </div>
+
+      <div style={{display:"flex", alignItems:"center", justifyContent:"center", marginBottom:"3rem",
+    gap:"3rem"}}>
+     <Card sx={{ maxWidth: 385 }} style={{display:"flex", alignItems:"center", flexDirection:"column",gap:"1rem"}}>
+      <CardMedia
+        sx={{ height: 245, width: 200 }}
+        style={{width:"120px",height:"120px"}}
+        image={img1}
+        title="green iguana"
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          Write Question 1 here 
+        </Typography>
+      </CardContent>
+      <CardActions>
+    <FormGroup>
+      <FormControlLabel  control={<Checkbox />} label="Done" />
+    </FormGroup>
+
+      </CardActions>
+    </Card>
+
+    <Card sx={{ maxWidth: 345 }} style={{display:"flex", alignItems:"center", flexDirection:"column",gap:"1rem"}}>
+      <CardMedia
+        sx={{ height: 245, width: 200 }}
+        style={{width:"120px",height:"120px"}}
+        image={img2}
+        title="green iguana"
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          Write Question 1 here 
+        </Typography>
+      </CardContent>
+      <CardActions>
+    <FormGroup>
+      <FormControlLabel  control={<Checkbox />} label="Done" />
+    </FormGroup>
+
+      </CardActions>
+    </Card>
+
+
+    <Card sx={{ maxWidth: 400, maxHeight: 600 }} style={{display:"flex", alignItems:"center", flexDirection:"column",gap:"1rem"}}>
+      <CardMedia
+        sx={{ height: 245, width: 200 }}
+        style={{width:"120px",height:"120px"}}
+        image={img3}
+        title="green iguana"
+      />
+      <CardContent>
+        <Typography gutterBottom variant="h5" component="div">
+          Write Question 1 here 
+        </Typography>
+      </CardContent>
+      <CardActions>
+    <FormGroup>
+      <FormControlLabel control={<Checkbox />} label="Done" />
+    </FormGroup>
+
+      </CardActions>
+    </Card>
+    </div>
+
+
     </main>
   );
 }

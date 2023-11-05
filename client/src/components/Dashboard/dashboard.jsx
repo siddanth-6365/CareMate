@@ -182,7 +182,7 @@ export default function MiniDrawer() {
           ))}
         </List>
       </Drawer>
-      <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+      <Box component="main" sx={{ flexGrow: 1, p: 3 }} style={{padding:"0"}}>
         <DrawerHeader />
         <Home />
       </Box>

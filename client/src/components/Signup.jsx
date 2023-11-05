@@ -3,21 +3,16 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import img2 from "../assets/home/signP.png";
-import { useContext } from "react";
 
 import { useUserContext } from "../context/UserContext";
 
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function Copyright(props) {
@@ -33,20 +28,10 @@ function Copyright(props) {
 
 const defaultTheme = createTheme();
 
-function handleAxiosSubmit(userDetails) {
-  axios
-    .post("/user/create", userDetails)
-    .then((response) => {
-      console.log(response.data.message);
-    })
-    .catch((error) => {
-      console.error("Error creating college:", error);
-    });
-}
-
 // here other user details need to be added in user details
 export default function SignUp() {
-  const { adduserDetails, userDetails } = useUserContext();
+  const { adduserDetails } = useUserContext();
+  const navigate = useNavigate();
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -54,14 +39,15 @@ export default function SignUp() {
     const userdata = {
       email: data.get("email"),
       password: data.get("password"),
+      name: data.get("firstName"),
     };
     adduserDetails(userdata);
-    handleAxiosSubmit(userDetails);
+    navigate("/next");
   };
 
   return (
     <ThemeProvider theme={defaultTheme}>
-      <Container component="main" maxWidth="xs" >
+      <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
           sx={{
